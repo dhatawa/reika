@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Reika - Memori Kita</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #d2b48c; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .wood-frame {
+            background-color: #8b5a2b;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            width: 95%;
+            max-width: 1100px;
+            height: 85vh;
+            display: flex;
+        }
+
+        .corkboard {
+            background-color: #fdf5e6; 
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            flex: 1;
+            border-radius: 5px;
+            position: relative;
+            padding: 30px;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Scroll jika foto sangat banyak */
+        }
+
+        /* Header Judul */
+        .board-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .board-header h1 {
+            color: #f4d03f;
+            font-size: 3.5rem;
+            margin: 0;
+            text-shadow: 3px 3px 0px #8b5a2b;
+            letter-spacing: 3px;
+        }
+
+        .board-header p {
+            margin: 5px 0 0 0;
+            font-style: italic;
+            color: #5d4037;
+        }
+
+        /* Container Utama Sidebar + Gallery */
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-btn {
+            background: white;
+            padding: 15px 5px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 12px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .menu-btn:hover { transform: scale(1.1); background: #fff9e6; }
+
+        /* Area Foto Rapi (Flexbox) */
+        .photo-area {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap; /* Supaya foto turun ke baris baru */
+            gap: 25px;      /* Jarak antar foto agar tidak tabrakan */
+            justify-content: center;
+            align-content: flex-start;
+            padding: 10px;
+        }
+
+        .photo-card {
+            background: white;
+            padding: 10px 10px 35px 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            position: relative;
+            width: 160px; /* Ukuran kartu foto */
+            transition: all 0.3s ease;
+            height: fit-content;
+        }
+
+        /* Efek Miring Estetik tanpa tabrakan */
+        .photo-card:nth-child(odd) { transform: rotate(-3deg); }
+        .photo-card:nth-child(even) { transform: rotate(3deg); }
+
+        .photo-card:hover {
+            transform: rotate(0deg) scale(1.1); /* Lurus dan membesar saat disentuh */
+            z-index: 50;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+
+        /* Pin */
+        .pin {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .red { background: #ff4d4d; }
+        .blue { background: #4d94ff; }
+        .yellow { background: #ffd11a; }
+        .green { background: #2ecc71; }
+
+    </style>
+</head>
+<body>
+
+    <div class="wood-frame">
+        <div class="corkboard">
+            
+            <div class="board-header">
+                <h1>REIKA</h1>
+                <p>Our Story</p>
+            </div>
+
+            <div class="main-content">
+                <div class="sidebar">
+                    <div class="menu-btn">🏠<br>Home</div>
+                    <div class="menu-btn">❤️<br>Story</div>
+                    <div class="menu-btn" onclick="document.getElementById('fileInput').click()">📷<br>Upload</div>
+                </div>
+
+                <div class="photo-area" id="gallery">
+                    </div>
+            </div>
+
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" style="display: none;" accept="image/*" multiple>
+
+    <script>
+        const gallery = document.getElementById('gallery');
+        const fileInput = document.getElementById('fileInput');
+
+        // Daftar foto awal
+        const initialPhotos = [
+            'image/foto1.jpeg',
+            'image/foto2.jpeg',
+            'image/foto3.jpeg',
+            'image/foto4.jpeg'
+        ];
+
+        function addPhoto(src) {
+            const card = document.createElement('div');
+            card.className = 'photo-card';
+            
+            const pins = ['red', 'blue', 'yellow', 'green'];
+            const randomPin = pins[Math.floor(Math.random() * pins.length)];
+
+            card.innerHTML = `
+                <div class="pin ${randomPin}"></div>
+                <img src="${src}" onerror="this.src='https://via.placeholder.com/150?text=Foto+Tidak+Ada'">
+            `;
+            
+            gallery.appendChild(card);
+        }
+
+        // Tampilkan foto awal
+        initialPhotos.forEach(src => addPhoto(src));
+
+        // Upload foto baru
+        fileInput.addEventListener('change', function() {
+            for (let file of this.files) {
+                const reader = new FileReader();
+                reader.onload = (e) => addPhoto(e.target.result);
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
